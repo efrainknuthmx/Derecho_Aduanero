@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Examen · Autoridades Aduaneras</title>
+<style>
+  :root{
+    --ink:#0f1b2d; --paper:#f4efe4; --paper2:#ece4d2;
+    --gold:#b8893b; --gold-deep:#8a6422; --gold-soft:#e6c98a;
+    --teal:#1f5e63; --teal-deep:#143f43; --teal-light:#2d8088;
+    --red:#9b2c2c; --green:#256d4c;
+    --line:#d6cab0; --muted:#5b5446;
+    --shadow:0 18px 40px -18px rgba(15,27,45,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(184,137,59,.10), transparent 45%),
+      radial-gradient(circle at 88% 92%, rgba(31,94,99,.10), transparent 45%),
+      var(--paper);
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px;}
+
+  /* ====== ENCABEZADO ====== */
+  header.brand{
+    text-align:center;padding:26px 14px 22px;
+    border-bottom:3px double var(--gold-deep);
+    margin-bottom:8px;position:relative;
+  }
+  .crest{
+    width:54px;height:54px;margin:0 auto 10px;border-radius:50%;
+    background:linear-gradient(145deg,var(--teal-light),var(--teal-deep));
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--gold);box-shadow:var(--shadow);
+    color:var(--gold-soft);font-size:26px;
+  }
+  .kicker{
+    font-family:Georgia,serif;letter-spacing:.32em;text-transform:uppercase;
+    font-size:11px;color:var(--gold-deep);margin:0 0 4px;font-weight:bold;
+  }
+  h1.title{
+    font-size:24px;margin:2px 0 4px;font-weight:bold;
+    color:var(--ink);letter-spacing:.01em;line-height:1.2;
+  }
+  .subtitle{font-size:13px;color:var(--muted);font-style:italic;margin:0;}
+
+  .card{
+    background:linear-gradient(180deg,#fffdf7,var(--paper2));
+    border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:22px 20px;margin-top:18px;
+  }
+
+  /* ====== INICIO ====== */
+  .lead{font-size:15px;color:var(--muted);margin:0 0 16px;}
+  label.fld{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold-deep);font-weight:bold;margin:14px 0 6px;}
+  input[type=text], select{
+    width:100%;padding:13px 14px;font-size:16px;font-family:inherit;
+    border:1px solid var(--line);border-radius:10px;background:#fffdf7;color:var(--ink);
+    outline:none;transition:border-color .2s, box-shadow .2s;
+  }
+  input[type=text]:focus, select:focus{
+    border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(45,128,136,.15);
+  }
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .info-grid .pill{
+    background:rgba(31,94,99,.07);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-size:12.5px;color:var(--teal-deep);
+  }
+  .info-grid .pill b{display:block;font-size:18px;color:var(--ink);font-family:Georgia;}
+
+  .btn{
+    display:block;width:100%;margin-top:20px;padding:15px;font-size:16px;font-weight:bold;
+    font-family:Georgia,serif;letter-spacing:.05em;cursor:pointer;border:none;border-radius:11px;
+    color:#fffdf7;background:linear-gradient(145deg,var(--teal-light),var(--teal-deep));
+    box-shadow:var(--shadow);transition:transform .12s, filter .2s;
+  }
+  .btn:active{transform:translateY(1px) scale(.995);}
+  .btn:disabled{filter:grayscale(.5) opacity(.6);cursor:not-allowed;}
+  .btn.gold{background:linear-gradient(145deg,var(--gold),var(--gold-deep));}
+  .btn.ghost{background:transparent;color:var(--teal-deep);border:1.5px solid var(--teal-light);box-shadow:none;}
+
+  /* ====== EXAMEN ====== */
+  .examtop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;}
+  .who{font-size:13px;color:var(--muted);}
+  .who b{color:var(--ink);}
+  .qcount{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-deep);font-weight:bold;}
+
+  .progress{height:7px;background:var(--paper2);border-radius:99px;overflow:hidden;margin:10px 0 4px;border:1px solid var(--line);}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-deep));width:0;transition:width .35s ease;}
+
+  /* Cronómetro */
+  .timerbar{display:flex;align-items:center;gap:12px;margin:14px 0 6px;}
+  .clock{
+    position:relative;width:60px;height:60px;flex:0 0 auto;
+  }
+  .clock svg{transform:rotate(-90deg);display:block;}
+  .clock .num{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:bold;font-family:Georgia;color:var(--teal-deep);
+  }
+  .timertext{font-size:12.5px;color:var(--muted);}
+  .timertext b{color:var(--ink);font-size:14px;}
+  .timerbar.warn .num{color:var(--red);}
+
+  .qtext{font-size:18.5px;line-height:1.45;margin:14px 0 18px;color:var(--ink);font-weight:bold;}
+
+  .opts{display:flex;flex-direction:column;gap:11px;}
+  .opt{
+    display:flex;align-items:center;gap:13px;padding:14px 15px;cursor:pointer;
+    border:1.5px solid var(--line);border-radius:11px;background:#fffdf7;
+    font-size:16px;transition:border-color .15s, background .15s, transform .1s;
+    user-select:none;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt .key{
+    flex:0 0 auto;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-weight:bold;font-size:15px;background:rgba(184,137,59,.14);color:var(--gold-deep);border:1px solid var(--gold-soft);
+  }
+  .opt.sel{border-color:var(--teal-light);background:rgba(45,128,136,.10);}
+  .opt.sel .key{background:var(--teal-deep);color:var(--gold-soft);border-color:var(--teal-deep);}
+
+  .navrow{display:flex;gap:12px;margin-top:20px;}
+  .navrow .btn{margin-top:0;}
+
+  /* ====== RESULTADOS ====== */
+  .scorehero{text-align:center;padding:8px 0 6px;}
+  .scorenum{font-size:58px;font-weight:bold;line-height:1;font-family:Georgia;}
+  .scorenum small{font-size:24px;color:var(--muted);}
+  .verdict{font-size:18px;font-weight:bold;margin:6px 0 2px;}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 6px;}
+  .stat{background:rgba(31,94,99,.06);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center;}
+  .stat b{display:block;font-size:22px;font-family:Georgia;color:var(--ink);}
+  .stat span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+
+  .reviewhead{margin:22px 0 8px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);font-weight:bold;border-bottom:1px solid var(--line);padding-bottom:6px;}
+  .rev{border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-bottom:11px;background:#fffdf7;}
+  .rev .qq{font-size:15px;font-weight:bold;margin:0 0 9px;}
+  .rev .ans{font-size:14px;margin:3px 0;display:flex;gap:8px;align-items:flex-start;}
+  .rev .tag{flex:0 0 auto;font-size:10px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:6px;margin-top:1px;}
+  .tag.ok{background:rgba(37,109,76,.15);color:var(--green);}
+  .tag.no{background:rgba(155,44,44,.13);color:var(--red);}
+  .tag.skip{background:rgba(91,84,70,.15);color:var(--muted);}
+  .rev .ans.correct b{color:var(--green);}
+  .rev .ans.wrong b{color:var(--red);text-decoration:line-through;}
+
+  .hidden{display:none!important;}
+  footer.fine{text-align:center;font-size:11px;color:var(--muted);margin-top:26px;font-style:italic;}
+  .fade{animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  @media print{.btn,.navrow{display:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="brand">
+    <div class="crest">&#9878;</div>
+    <p class="kicker">Evaluación de Comercio Exterior</p>
+    <h1 class="title">Autoridades Aduaneras, Auxiliares,<br>Conexas y Ejecutores del Despacho</h1>
+    <p class="subtitle">Examen de opción múltiple &middot; cronometrado</p>
+  </header>
+
+  <!-- ============ PANTALLA INICIO ============ -->
+  <section id="start" class="card fade">
+    <p class="lead">Antes de comenzar, registra tu nombre. El examen consta de la totalidad de las preguntas del temario, presentadas en orden aleatorio y sin repetición. Cada pregunta tiene un límite de <b>2 minutos</b>; al agotarse el tiempo se avanza automáticamente a la siguiente.</p>
+
+    <label class="fld" for="name">Nombre del sustentante</label>
+    <input type="text" id="name" placeholder="Escribe tu nombre completo" autocomplete="off">
+
+    <div class="info-grid">
+      <div class="pill">Total del examen<b id="poolsize">0</b>preguntas</div>
+      <div class="pill">Tiempo por pregunta<b>2:00</b>minutos</div>
+    </div>
+
+    <button class="btn" id="goBtn">Comenzar examen</button>
+    <p id="startErr" style="color:var(--red);font-size:13px;margin:10px 0 0;text-align:center;" class="hidden">Por favor escribe tu nombre.</p>
+  </section>
+
+  <!-- ============ PANTALLA EXAMEN ============ -->
+  <section id="exam" class="card hidden">
+    <div class="examtop">
+      <span class="who">Sustentante: <b id="whoName">—</b></span>
+      <span class="qcount" id="qcount">1 / 10</span>
+    </div>
+    <div class="progress"><i id="bar"></i></div>
+
+    <div class="timerbar" id="timerbar">
+      <div class="clock">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="#d6cab0" stroke-width="6"></circle>
+          <circle id="ring" cx="30" cy="30" r="26" fill="none" stroke="#1f5e63" stroke-width="6"
+                  stroke-linecap="round" stroke-dasharray="163.36" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="num" id="clockNum">2:00</div>
+      </div>
+      <div class="timertext">Tiempo restante para esta pregunta.<br><b>Al llegar a 0:00 se avanza solo.</b></div>
+    </div>
+
+    <p class="qtext" id="qtext">…</p>
+    <div class="opts" id="opts"></div>
+
+    <div class="navrow">
+      <button class="btn gold" id="nextBtn">Siguiente &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA RESULTADOS ============ -->
+  <section id="result" class="card hidden">
+    <div class="scorehero">
+      <div class="scorenum" id="scoreNum">0<small>/100</small></div>
+      <div class="verdict" id="verdict">—</div>
+      <div class="who" style="margin-top:4px;">Sustentante: <b id="whoName2">—</b></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="stCorrect">0</b><span>Aciertos</span></div>
+      <div class="stat"><b id="stWrong">0</b><span>Errores</span></div>
+      <div class="stat"><b id="stTime">0:00</b><span>Tiempo total</span></div>
+    </div>
+
+    <div class="navrow">
+      <button class="btn ghost" id="printBtn">Imprimir / Guardar PDF</button>
+      <button class="btn" id="againBtn">Nuevo examen</button>
+    </div>
+
+    <div class="reviewhead">Revisión de respuestas</div>
+    <div id="review"></div>
+  </section>
+
+  <footer class="fine">Documento de evaluación · Las respuestas correctas se fundamentan en la Ley Aduanera y su Reglamento. Funciona sin conexión en Android, iPhone y computadora.</footer>
+</div>
+
+<script>
+const BANCO = [{"q": "La máxima autoridad aduanera (en materia fiscal y aduanera) es:", "options": ["SAT", "SHCP", "AGA", "Aduanas locales"], "answer": 1}, {"q": "¿Qué entidad es la máxima autoridad en materia fiscal y aduanera en México?", "options": ["Agencia Nacional de Aduanas de México", "Secretaría de Hacienda y Crédito Público", "Administradores de Aduanas", "Secretaría de Economía"], "answer": 1}, {"q": "La Agencia Nacional de Aduanas de México (ANAM) es:", "options": ["Una dependencia de la Secretaría de Economía", "Un órgano desconcentrado de la SHCP", "Una entidad autónoma", "Un organismo descentralizado"], "answer": 1}, {"q": "La ANAM es un órgano:", "options": ["Autónomo constitucional", "Centralizado", "Desconcentrado de la SHCP", "Descentralizado"], "answer": 2}, {"q": "La Agencia Nacional de Aduanas de México es responsable de:", "options": ["Formular las políticas fiscales", "Establecer tratados comerciales", "Administrar las aduanas del país", "Representar a importadores"], "answer": 2}, {"q": "¿Cuál entidad reemplazó al SAT en materia aduanera?", "options": ["La SHCP", "La ANAM", "La Secretaría de Economía", "La API"], "answer": 1}, {"q": "¿En qué año reemplazó la ANAM al SAT en materia aduanera?", "options": ["2018", "2019", "2020", "2021"], "answer": 3}, {"q": "¿Cuántas aduanas administra la ANAM en México (aproximadamente)?", "options": ["30 aduanas", "40 aduanas", "49 aduanas", "60 aduanas"], "answer": 2}, {"q": "El número total de aduanas en México es aproximadamente:", "options": ["49", "52", "55", "58"], "answer": 0}, {"q": "El SAT es un órgano:", "options": ["Centralizado", "Desconcentrado", "Descentralizado", "Autónomo"], "answer": 1}, {"q": "La AGA (Administración General de Aduanas) es:", "options": ["Autoridad superior independiente", "Órgano / unidad administrativa desconcentrada", "Una Secretaría de Estado", "Organismo autónomo"], "answer": 1}, {"q": "El Administrador General de Aduanas es nombrado por:", "options": ["El Presidente", "SHCP", "SAT", "Congreso"], "answer": 1}, {"q": "¿Quién es la autoridad operativa en el control y facilitación del comercio exterior?", "options": ["La SHCP", "La ANAM", "Los administradores de aduanas", "Los agentes aduanales"], "answer": 1}, {"q": "¿Quién establece las políticas públicas en materia de comercio exterior?", "options": ["La ANAM", "Los administradores de aduanas", "La SHCP", "Los agentes aduanales"], "answer": 2}, {"q": "¿Quién emite disposiciones de carácter general en materia aduanera?", "options": ["La ANAM", "Los administradores de aduanas", "La SHCP", "El agente aduanal"], "answer": 2}, {"q": "¿Quién coordina a las demás autoridades aduaneras?", "options": ["El Presidente de la República", "La ANAM", "La SHCP", "La Secretaría de Economía"], "answer": 1}, {"q": "Las autoridades aduaneras se definen en la Ley Aduanera como:", "options": ["Entidades que realizan importaciones y exportaciones", "Aquellas que tienen competencia para ejercer las facultades que la ley les confiere", "Organismos internacionales que regulan el comercio exterior", "Empresas que administran las aduanas"], "answer": 1}, {"q": "¿Quiénes son las autoridades aduaneras según la Ley Aduanera?", "options": ["Solo la SHCP y la ANAM", "La SHCP, la ANAM, Administradores de Aduanas, Verificadores y personal oficial de la aduana", "Solo los Administradores de Aduanas", "Cualquier servidor público del gobierno federal"], "answer": 1}, {"q": "¿Cuál de estas personas NO es considerada una autoridad aduanera?", "options": ["El Administrador de Aduana", "Un verificador", "Un agente aduanal", "El personal oficial de la aduana"], "answer": 2}, {"q": "¿Cuál de las siguientes NO es una autoridad aduanera?", "options": ["La SHCP", "La ANAM", "Los verificadores", "Los agentes aduanales"], "answer": 3}, {"q": "¿Cuál de las siguientes es una autoridad aduanera?", "options": ["Un agente aduanal", "Un verificador", "Una empresa de mensajería", "Una compañía naviera"], "answer": 1}, {"q": "Las administraciones centrales de aduanas dependen de:", "options": ["SHCP", "SAT", "AGA", "Secretario"], "answer": 2}, {"q": "Las aduanas fronterizas dependen de:", "options": ["Gobernadores", "AGA", "Administraciones centrales", "SAT directamente"], "answer": 2}, {"q": "La estructura operativa de la ANAM incluye los niveles:", "options": ["Federal, estatal y municipal", "Superior, medio e inferior", "Central, regional y local", "Primario, secundario y terciario"], "answer": 2}, {"q": "Los administradores de aduana, en la estructura de la ANAM, corresponden al nivel:", "options": ["Central", "Regional", "Local", "Federal"], "answer": 2}, {"q": "Los administradores regionales, en la estructura de la ANAM, corresponden al nivel:", "options": ["Central", "Regional", "Local", "Federal"], "answer": 1}, {"q": "Las aduanas se clasifican por su función en:", "options": ["Fronterizas e interiores", "Marítimas y terrestres", "Principales y alternas", "Todas las anteriores"], "answer": 0}, {"q": "Las aduanas interiores se ubican en:", "options": ["Fronteras", "Puertos", "Ciudades principales", "Aeropuertos"], "answer": 2}, {"q": "La supervisión de aduanas corresponde a:", "options": ["Administradores generales", "Administradores centrales", "Administradores de aduana", "Todas las anteriores"], "answer": 3}, {"q": "¿Quién tiene la facultad de establecer o suprimir aduanas según la Ley Aduanera?", "options": ["El Presidente de la República", "La ANAM", "La SHCP", "Los Administradores de Aduanas"], "answer": 2}, {"q": "¿Quién tiene la facultad de señalar la circunscripción territorial de las aduanas?", "options": ["La SHCP", "La ANAM", "Los administradores de aduanas", "El Congreso de la Unión"], "answer": 0}, {"q": "Una facultad de la SHCP según la Ley Aduanera es:", "options": ["Elaborar pedimentos", "Señalar la circunscripción territorial de las aduanas", "Actuar como agente aduanal", "Realizar el reconocimiento previo"], "answer": 1}, {"q": "¿Cuál de las siguientes NO es una facultad de la SHCP en materia aduanera?", "options": ["Señalar la circunscripción territorial de las aduanas", "Establecer o suprimir aduanas", "Negociar tratados internacionales de libre comercio", "Fijar los requisitos para el establecimiento de recintos fiscalizados"], "answer": 2}, {"q": "Una facultad de las autoridades aduaneras según el Art. 144 de la Ley Aduanera es:", "options": ["Elaborar pedimentos", "Comprobar la exactitud de los documentos aduaneros", "Actuar como agentes aduanales", "Representar a los importadores"], "answer": 1}, {"q": "Según el Art. 144 de la Ley Aduanera, una facultad de las autoridades aduaneras es:", "options": ["Elaborar pedimentos", "Verificar mercancías en transporte", "Actuar como agentes aduanales", "Representar a los importadores"], "answer": 1}, {"q": "Según el Art. 144 de la Ley Aduanera, las autoridades aduaneras pueden:", "options": ["Elaborar pedimentos", "Determinar las contribuciones y aprovechamientos omitidos", "Actuar como agentes aduanales", "Representar a los importadores"], "answer": 1}, {"q": "Una facultad de control y fiscalización de las autoridades aduaneras es:", "options": ["Establecer o suprimir aduanas", "Comprobar la exactitud de los documentos aduaneros", "Autorizar a agentes aduanales", "Negociar tratados comerciales"], "answer": 1}, {"q": "¿Cuál NO es facultad aduanera?", "options": ["Determinar impuestos", "Fijar precios de las mercancías", "Reconocimiento aduanero", "Embargo de mercancías"], "answer": 1}, {"q": "¿Quién está facultado para cancelar patentes de agentes aduanales?", "options": ["El Presidente de la República", "El Secretario de Hacienda", "Las autoridades aduaneras", "Los tribunales administrativos"], "answer": 2}, {"q": "El reconocimiento aduanero lo practica:", "options": ["Agente aduanal", "Autoridad aduanera", "Importador", "Transportista"], "answer": 1}, {"q": "Las visitas domiciliarias las practican:", "options": ["Solo auditores", "Autoridades aduaneras", "Agentes", "Verificadores"], "answer": 1}, {"q": "El embargo precautorio lo ordena:", "options": ["Juez", "Autoridad aduanera", "SAT", "SHCP"], "answer": 1}, {"q": "Las multas las impone:", "options": ["El agente", "La autoridad", "El importador", "SHCP"], "answer": 1}, {"q": "El agente aduanal se define como:", "options": ["Un servidor público", "Una persona física autorizada mediante patente", "Un empleado de la ANAM", "Una autoridad auxiliar"], "answer": 1}, {"q": "Un agente aduanal es:", "options": ["Un servidor público designado por la ANAM", "Una persona física autorizada mediante patente para promover el despacho de mercancías", "Un empleado de la empresa importadora", "Un trabajador del recinto fiscalizado"], "answer": 1}, {"q": "Los agentes aduanales son personas:", "options": ["Morales", "Físicas", "Públicas", "Extranjeras"], "answer": 1}, {"q": "El agente aduanal actúa como:", "options": ["Autoridad aduanera", "Servidor público", "Representante de importadores y exportadores", "Autoridad auxiliar"], "answer": 2}, {"q": "Un agente aduanal actúa como:", "options": ["Autoridad aduanera", "Perito en materia aduanera", "Funcionario de la SHCP", "Autoridad auxiliar"], "answer": 1}, {"q": "Un agente aduanal requiere para operar:", "options": ["Autorización", "Concesión", "Patente", "Permiso"], "answer": 2}, {"q": "La patente de un agente aduanal es:", "options": ["Transferible a cualquier persona", "Intransferible (no transmisible)", "Renovable anualmente mediante pago", "Válida por solo 5 años"], "answer": 1}, {"q": "Los agentes aduanales son responsables, respecto del pago de impuestos, de manera:", "options": ["Sin responsabilidad", "Responsables solidarios", "Subsidiaria únicamente", "No participan"], "answer": 1}, {"q": "El agente aduanal es responsable de:", "options": ["Establecer aranceles", "Fijar regulaciones no arancelarias", "Clasificar arancelariamente las mercancías", "Modificar los regímenes aduaneros"], "answer": 2}, {"q": "¿Cuál es una facultad del agente aduanal?", "options": ["Establecer aranceles", "Determinar el valor en aduana de las mercancías", "Autorizar recintos fiscalizados", "Establecer cuotas compensatorias"], "answer": 1}, {"q": "¿Cuál NO es una facultad del agente aduanal?", "options": ["Elaborar y firmar pedimentos", "Clasificar arancelariamente las mercancías", "Establecer cuotas compensatorias", "Determinar el valor en aduana de las mercancías"], "answer": 2}, {"q": "El ámbito territorial del agente aduanal es:", "options": ["Nacional", "Aduana de adscripción", "Estatal", "Regional"], "answer": 1}, {"q": "Una persona puede ser agente aduanal en:", "options": ["Una aduana de adscripción (con posibilidad de actuar en otras autorizadas)", "Todas las aduanas sin restricción", "Solo aduanas fronterizas", "Según el examen"], "answer": 0}, {"q": "¿Cuántas patentes puede tener una persona?", "options": ["Una", "Dos", "Tres", "Sin límite"], "answer": 0}, {"q": "Para ser agente aduanal se requiere (requisito de nacionalidad):", "options": ["Ser de cualquier nacionalidad", "Ser mexicano por nacimiento", "Ser extranjero con residencia permanente", "Ser funcionario de la ANAM"], "answer": 1}, {"q": "¿Qué característica debe tener una persona para ser agente aduanal según la Ley Aduanera?", "options": ["Puede ser extranjero con residencia permanente", "Debe ser mexicano por nacimiento", "Puede ser servidor público con autorización especial", "Debe tener parentesco con el administrador de la aduana"], "answer": 1}, {"q": "Para ser agente aduanal, ¿qué requisito educativo se necesita?", "options": ["Certificación técnica en aduanas", "Título profesional", "Maestría en comercio exterior", "Diplomado en legislación aduanera"], "answer": 1}, {"q": "¿Cuál de estos NO es un requisito para ser agente aduanal?", "options": ["Ser mexicano por nacimiento", "No haber sido condenado por delito doloso", "Tener posgrado en comercio exterior", "No ser servidor público o militar en servicio activo"], "answer": 2}, {"q": "¿Cuál de los siguientes NO es un requisito para ser agente aduanal?", "options": ["Estar inscrito en el RFC", "Aprobar examen de conocimientos", "Ser de nacionalidad extranjera", "No ser servidor público"], "answer": 2}, {"q": "Un requisito para ser agente aduanal es:", "options": ["Ser extranjero con residencia permanente", "Estar inscrito en el RFC y al corriente en obligaciones fiscales", "No tener título profesional", "Ser servidor público"], "answer": 1}, {"q": "Un requisito para ser agente aduanal relacionado con antecedentes es:", "options": ["Ser extranjero con residencia permanente", "No estar inscrito en el RFC", "No haber sido condenado por delito doloso", "Ser funcionario público"], "answer": 2}, {"q": "Un requisito de evaluación para ser agente aduanal es:", "options": ["Ser extranjero con residencia permanente", "No estar inscrito en el RFC", "Aprobar examen de conocimientos y psicotécnico", "Ser menor de edad"], "answer": 2}, {"q": "Un requisito de parentesco para ser agente aduanal es:", "options": ["Ser extranjero con residencia permanente", "No estar inscrito en el RFC", "No tener parentesco con el administrador de la aduana", "Ser militar en servicio activo"], "answer": 2}, {"q": "El examen para agente aduanal (de oposición) evalúa:", "options": ["Solo conocimientos", "Conocimientos y práctica (técnico y psicotécnico)", "Solo experiencia", "Personalidad únicamente"], "answer": 1}, {"q": "Los antecedentes penales (por delito doloso) impiden:", "options": ["Ser agente", "Ser suplente", "Ambos", "Solo ciertos delitos"], "answer": 2}, {"q": "Una obligación del agente aduanal según el Art. 162 de la Ley Aduanera es:", "options": ["Establecer aranceles", "Formar un archivo con la documentación de las operaciones", "Autorizar recintos fiscalizados", "Determinar cuotas compensatorias"], "answer": 1}, {"q": "Según el Art. 162 de la Ley Aduanera, el agente aduanal debe:", "options": ["Establecer aranceles", "Ocuparse personal y habitualmente de las actividades propias de su función", "Autorizar recintos fiscalizados", "Determinar cuotas compensatorias"], "answer": 1}, {"q": "Según el Art. 162 de la Ley Aduanera, el agente aduanal debe (candados):", "options": ["Establecer aranceles", "Utilizar los candados oficiales en los vehículos y contenedores", "Autorizar recintos fiscalizados", "Determinar cuotas compensatorias"], "answer": 1}, {"q": "Según el Art. 162 de la Ley Aduanera, el agente aduanal debe (empleados):", "options": ["Establecer aranceles", "Dar a conocer a la aduana los empleados autorizados", "Autorizar recintos fiscalizados", "Determinar cuotas compensatorias"], "answer": 1}, {"q": "Según el Art. 162 de la Ley Aduanera, el agente aduanal debe rendir:", "options": ["Aranceles", "Un dictamen técnico cuando la autoridad lo solicite", "Cuotas compensatorias", "Tratados comerciales"], "answer": 1}, {"q": "La característica principal de un apoderado aduanal es que:", "options": ["Promueve el despacho para múltiples clientes", "Promueve exclusivamente el despacho de una empresa específica", "Actúa como autoridad aduanera", "Es un empleado de la ANAM"], "answer": 1}, {"q": "Los apoderados aduanales están autorizados para:", "options": ["Representar a cualquier importador o exportador", "Promover exclusivamente el despacho de mercancías de una empresa específica", "Actuar como autoridades auxiliares", "Sustituir a los administradores de aduanas"], "answer": 1}, {"q": "El apoderado aduanal recibe:", "options": ["Una patente igual que el agente aduanal", "Una autorización para representar a una empresa específica", "Un nombramiento temporal", "Una licencia de operación limitada"], "answer": 1}, {"q": "¿Quién puede ser apoderado aduanal?", "options": ["Solo abogados", "Una persona física designada por la empresa", "Solo agentes aduanales", "Solo personas morales"], "answer": 1}, {"q": "La autorización del apoderado aduanal es:", "options": ["Heredable", "No transmisible", "Transferible a cualquier persona", "Válida por solo 5 años"], "answer": 1}, {"q": "La infraestructura que utiliza un apoderado aduanal es:", "options": ["Propia", "De la empresa que lo designa", "De la ANAM", "Compartida con otros apoderados"], "answer": 1}, {"q": "La principal limitación del apoderado aduanal es:", "options": ["No puede clasificar arancelariamente", "Solo opera para la empresa que lo designa", "No puede realizar reconocimiento previo", "No puede efectuar el pago de contribuciones"], "answer": 1}, {"q": "En el caso de una empresa que utiliza un apoderado aduanal, éste:", "options": ["Cobra honorarios por operación", "Puede atender a otros clientes", "Recibe salario como empleado de la empresa", "Es contratado externamente como agente"], "answer": 2}, {"q": "La principal diferencia entre agente aduanal y apoderado aduanal en cuanto a representación es:", "options": ["El agente representa a múltiples clientes y el apoderado a una empresa específica", "El apoderado representa a múltiples clientes y el agente a una empresa específica", "Ambos pueden representar únicamente a un cliente", "Ninguno puede representar a más de tres clientes"], "answer": 0}, {"q": "La diferencia entre agente y apoderado aduanal en cuanto a autorización es:", "options": ["El agente opera con patente y el apoderado con autorización", "El apoderado opera con patente y el agente con autorización", "Ambos operan con patente", "Ninguno necesita autorización formal"], "answer": 0}, {"q": "La diferencia entre agente y apoderado aduanal en cuanto a responsabilidad es:", "options": ["El agente no tiene responsabilidad", "El apoderado no tiene responsabilidad", "El agente tiene responsabilidad personal e ilimitada mientras el apoderado la comparte con la empresa", "Ambos tienen exactamente la misma responsabilidad"], "answer": 2}, {"q": "La diferencia entre agente y apoderado aduanal en cuanto a alcance de regímenes es:", "options": ["El agente puede operar en todos los regímenes y el apoderado tiene regímenes limitados", "El apoderado puede operar en todos los regímenes y el agente tiene regímenes limitados", "Ambos tienen exactamente las mismas limitaciones de régimen", "Ninguno puede operar en regímenes de depósito fiscal"], "answer": 0}, {"q": "La Agencia Aduanal se define como:", "options": ["Una oficina de la ANAM", "Una persona moral constituida por al menos un agente aduanal", "Un organismo descentralizado", "Una autoridad auxiliar"], "answer": 1}, {"q": "La principal ventaja de una Agencia Aduanal sobre un agente aduanal individual es:", "options": ["Menor costo operativo", "Mayor facilidad para obtener la patente", "Continuidad del servicio ante ausencia del agente", "Exención de responsabilidades fiscales"], "answer": 2}, {"q": "El despacho aduanero se define como:", "options": ["El pago de impuestos por mercancías importadas", "El conjunto de actos y formalidades relativos a la entrada y salida de mercancías del territorio nacional", "La revisión física de las mercancías", "El almacenamiento en recintos fiscalizados"], "answer": 1}, {"q": "Según el Art. 35 de la Ley Aduanera, el despacho aduanero incluye:", "options": ["Solo aspectos documentales", "Solo actos de importación", "Solo actos de exportación", "Actos y formalidades relativos a la entrada y salida de mercancías"], "answer": 3}, {"q": "¿Quiénes intervienen en el despacho aduanero según el Art. 35 de la Ley Aduanera?", "options": ["Solo las autoridades aduaneras", "Solo los agentes aduanales", "Autoridades aduaneras, consignatarios/destinatarios, remitentes y agentes aduanales", "Únicamente importadores y exportadores"], "answer": 2}, {"q": "En el despacho aduanero de una importación, los consignatarios, destinatarios, propietarios o poseedores son:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Participantes directos"], "answer": 3}, {"q": "En el contexto del despacho aduanero, los remitentes participan en:", "options": ["Importaciones", "Exportaciones", "Solo tránsito internacional", "Solo depósito fiscal"], "answer": 1}, {"q": "¿Quién realiza el reconocimiento previo de las mercancías?", "options": ["El personal de la ANAM", "Las autoridades auxiliares", "El agente aduanal", "Solo el administrador de la aduana"], "answer": 2}, {"q": "Son ejecutores del despacho aduanero:", "options": ["Agentes y apoderados aduanales", "Solo agentes", "Solo apoderados", "Las autoridades"], "answer": 0}, {"q": "Las autoridades auxiliares tienen funciones de:", "options": ["Administración directa de aduanas", "Apoyo por mandato de ley", "Representación de importadores", "Almacenamiento de mercancías"], "answer": 1}, {"q": "La Secretaría de Salud actúa como autoridad auxiliar a través de:", "options": ["SENASICA", "COFEPRIS", "SEMARNAT", "La Guardia Nacional"], "answer": 1}, {"q": "La Secretaría de Agricultura actúa como autoridad auxiliar a través de:", "options": ["COFEPRIS", "SENASICA", "SEMARNAT", "La Guardia Nacional"], "answer": 1}, {"q": "La Secretaría de la Defensa Nacional actúa como autoridad auxiliar en:", "options": ["Control de exportaciones de alimentos", "Control de armas y explosivos", "Verificación de normas oficiales", "Inspección de transporte terrestre"], "answer": 1}, {"q": "La Secretaría de Economía actúa como autoridad auxiliar en:", "options": ["Control de armas", "Permisos de importación/exportación", "Sanidad animal", "Control de transporte"], "answer": 1}, {"q": "¿Cuál de las siguientes NO es una autoridad auxiliar según la Ley Aduanera?", "options": ["Secretaría de la Defensa Nacional", "Secretaría de Economía", "Administraciones Portuarias Integrales", "Secretaría de Agricultura"], "answer": 2}, {"q": "SENASICA es autoridad:", "options": ["Aduanera", "Auxiliar", "Conexa", "Ejecutora"], "answer": 1}, {"q": "¿Cuál entidad verifica la sanidad animal y vegetal en importaciones?", "options": ["COFEPRIS", "SENASICA", "SEMARNAT", "Secretaría de Economía"], "answer": 1}, {"q": "¿Cuál entidad verifica aspectos sanitarios de medicamentos y alimentos en importaciones?", "options": ["SENASICA", "COFEPRIS", "SEMARNAT", "Secretaría de Economía"], "answer": 1}, {"q": "¿Cuál entidad verifica productos forestales y especies protegidas?", "options": ["COFEPRIS", "SENASICA", "SEMARNAT", "Secretaría de Economía"], "answer": 2}, {"q": "La Secretaría de Medio Ambiente (SEMARNAT) es considerada una:", "options": ["Autoridad aduanera", "Autoridad auxiliar", "Autoridad conexa", "Agente del despacho aduanero"], "answer": 1}, {"q": "Las Administraciones Portuarias Integrales (APIs) son consideradas:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Agentes aduanales"], "answer": 2}, {"q": "Las compañías navieras son consideradas:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Agentes aduanales"], "answer": 2}, {"q": "Las compañías aerolíneas son consideradas:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Agentes aduanales"], "answer": 2}, {"q": "Las empresas de mensajería y paquetería internacional son consideradas:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Agentes aduanales"], "answer": 2}, {"q": "Los transportistas terrestres internacionales son considerados:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Agentes aduanales"], "answer": 2}, {"q": "Los recintos fiscalizados concesionados son considerados:", "options": ["Autoridades aduaneras", "Autoridades auxiliares", "Autoridades conexas", "Ejecutores del despacho aduanero"], "answer": 2}, {"q": "La Secretaría de Comunicaciones y Transportes (SCT) es considerada:", "options": ["Autoridad aduanera", "Autoridad auxiliar", "Autoridad conexa", "Agente aduanal"], "answer": 2}, {"q": "Aeropuertos y Servicios Auxiliares (ASA) es considerada:", "options": ["Autoridad aduanera", "Autoridad auxiliar", "Autoridad conexa", "Agente aduanal"], "answer": 2}, {"q": "¿Cuál de estas entidades NO es considerada una autoridad conexa?", "options": ["Administraciones Portuarias Integrales", "Secretaría de Agricultura", "Recintos Fiscalizados", "Compañías navieras"], "answer": 1}, {"q": "¿Cuál NO es autoridad conexa?", "options": ["Banco de México", "SENASICA", "COFEPRIS", "Agente aduanal"], "answer": 3}, {"q": "En la descarga de mercancía en puerto marítimo, ¿quién administra el puerto y coordina los muelles?", "options": ["La ANAM", "La naviera", "La API (Administración Portuaria Integral)", "El recinto fiscalizado"], "answer": 2}, {"q": "En la descarga de mercancía en puerto marítimo, ¿quién recibe y almacena la mercancía?", "options": ["La API", "La naviera", "El recinto fiscalizado", "Los transportistas terrestres"], "answer": 2}, {"q": "En la descarga de mercancía en puerto marítimo, ¿quién supervisa y controla todo el proceso aduanero?", "options": ["La API", "La naviera", "El recinto fiscalizado", "La ANAM"], "answer": 3}, {"q": "En la importación de productos agrícolas, ¿quién inspecciona los productos para verificar ausencia de plagas?", "options": ["COFEPRIS", "SENASICA", "SEMARNAT", "ANAM"], "answer": 1}, {"q": "En la importación de productos agrícolas para consumo humano, ¿quién verifica los aspectos sanitarios?", "options": ["SENASICA", "COFEPRIS", "SEMARNAT", "Secretaría de Economía"], "answer": 1}, {"q": "En la importación de productos agrícolas, ¿quién revisa la documentación aduanera y autoriza el despacho?", "options": ["SENASICA", "COFEPRIS", "ANAM", "Secretaría de Economía"], "answer": 2}, {"q": "El Procedimiento Administrativo en Materia Aduanera (PAMA) se inicia cuando:", "options": ["Se realiza cualquier importación", "La autoridad detecta irregularidades en la importación", "Un importador solicita una revisión", "Un agente aduanal comete un error en el pedimento"], "answer": 1}, {"q": "En un PAMA, cuando la autoridad toma medidas precautorias, ejerce la facultad de:", "options": ["Inspección", "Aseguramiento", "Notificación", "Sancionadora"], "answer": 1}, {"q": "En un PAMA, cuando la autoridad determina contribuciones omitidas, ejerce la facultad:", "options": ["De inspección", "De aseguramiento", "De notificación", "De determinación fiscal"], "answer": 3}, {"q": "En un PAMA, cuando la autoridad impone sanciones, ejerce la facultad:", "options": ["Ejecutiva", "Legislativa", "Sancionadora", "Judicial"], "answer": 2}, {"q": "La operación aduanera en México está regulada principalmente por:", "options": ["El Código Fiscal de la Federación", "La Ley de Comercio Exterior", "La Ley Aduanera y su Reglamento", "Las Reglas Generales de Comercio Exterior solamente"], "answer": 2}, {"q": "El marco legal aduanero en México determina:", "options": ["Únicamente los aranceles aplicables", "Solo los impuestos de importación", "Las responsabilidades de cada participante en el despacho aduanero", "Exclusivamente las facultades de los agentes aduanales"], "answer": 2}, {"q": "Las infracciones aduaneras pueden ser:", "options": ["Administrativas", "Penales", "Administrativas y penales", "Solo administrativas"], "answer": 2}, {"q": "Las infracciones se sancionan conforme a:", "options": ["Código penal", "Ley Aduanera", "Código fiscal", "Ley comercial"], "answer": 1}, {"q": "Las multas se calculan en:", "options": ["Pesos", "UMA", "Dólares", "Según la mercancía"], "answer": 1}, {"q": "Las sanciones administrativas son:", "options": ["Definitivas", "Recurribles", "Inapelables", "Temporales"], "answer": 1}, {"q": "Las mercancías embargadas quedan bajo custodia de:", "options": ["La autoridad", "El agente", "El importador", "El almacén"], "answer": 0}, {"q": "La reincidencia, en materia de infracciones:", "options": ["Agrava siempre", "No tiene efecto", "Agrava la sanción", "Disminuye la sanción"], "answer": 2}, {"q": "El mandato del apoderado debe ser:", "options": ["General", "Especial", "Verbal", "Tácito"], "answer": 1}, {"q": "El poder del apoderado aduanal debe otorgarse ante:", "options": ["Notario", "Autoridad aduanera", "Agente", "SAT"], "answer": 0}, {"q": "El mandato se extingue por:", "options": ["Cumplimiento del encargo", "Imposibilidad", "Muerte del mandante", "Todas las anteriores"], "answer": 3}, {"q": "¿Quién puede revocar el poder?", "options": ["El apoderado", "El poderdante (mandante)", "La autoridad", "El agente"], "answer": 1}, {"q": "La validez del mandato requiere:", "options": ["Capacidad", "Consentimiento", "Objeto lícito", "Todas las anteriores"], "answer": 3}, {"q": "¿Cuándo termina el mandato del apoderado?", "options": ["Por muerte", "Por revocación", "Por renuncia", "Todas las anteriores"], "answer": 3}, {"q": "Los créditos fiscales se pueden garantizar con:", "options": ["Fianza", "Depósito en dinero", "Hipoteca", "Todas las anteriores"], "answer": 3}, {"q": "El seguro de responsabilidad profesional del agente es:", "options": ["Opcional", "Obligatorio", "Recomendable", "Prohibido"], "answer": 1}, {"q": "La capacitación continua del agente aduanal es:", "options": ["Opcional", "Obligatoria", "Recomendable", "Innecesaria"], "answer": 1}, {"q": "El padrón de importadores lo administra:", "options": ["Cada aduana", "El SAT", "La SHCP", "La SE"], "answer": 1}];
+const PER_Q_SECONDS = 120;          // 2 minutos por pregunta
+const LETTERS = ["a","b","c","d"];
+
+let quiz = [];      // preguntas elegidas (barajadas)
+let idx = 0;        // índice actual
+let answers = [];   // respuesta del usuario por pregunta (null = sin responder)
+let timer = null;
+let remaining = PER_Q_SECONDS;
+let totalElapsed = 0;
+const RING_LEN = 2 * Math.PI * 26;
+
+// ---- utilidades ----
+// Entero aleatorio en [0, max) usando aleatoriedad criptográfica real
+// (independiente del reloj, para que dos alumnos NUNCA compartan orden).
+function randInt(max){
+  if(window.crypto && window.crypto.getRandomValues){
+    const range = 4294967296;                 // 2^32
+    const limit = range - (range % max);       // evita sesgo de módulo
+    const buf = new Uint32Array(1);
+    let x;
+    do { window.crypto.getRandomValues(buf); x = buf[0]; } while(x >= limit);
+    return x % max;
+  }
+  return Math.floor(Math.random()*max);        // respaldo
+}
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = randInt(i+1);
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function fmt(s){
+  const m = Math.floor(s/60), sec = s%60;
+  return m + ":" + String(sec).padStart(2,"0");
+}
+function $(id){return document.getElementById(id);}
+
+// ---- inicializar pantalla de inicio ----
+(function initStart(){
+  $("poolsize").textContent = BANCO.length;
+})();
+
+// ---- iniciar examen ----
+$("goBtn").addEventListener("click", ()=>{
+  const name = $("name").value.trim();
+  if(!name){ $("startErr").classList.remove("hidden"); return; }
+  $("startErr").classList.add("hidden");
+
+  const n = BANCO.length;
+  // barajar opciones internas de cada pregunta para evitar memorización por posición
+  quiz = shuffle(BANCO).map(p=>{
+    const order = shuffle([0,1,2,3]);
+    const newOpts = order.map(i=>p.options[i]);
+    const newAnswer = order.indexOf(p.answer);
+    return {q:p.q, options:newOpts, answer:newAnswer};
+  });
+  answers = new Array(quiz.length).fill(null);
+  idx = 0; totalElapsed = 0;
+
+  $("whoName").textContent = name;
+  $("whoName2").textContent = name;
+  $("start").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("exam").classList.remove("hidden");
+  renderQuestion();
+});
+
+// ---- renderizar pregunta ----
+function renderQuestion(){
+  const item = quiz[idx];
+  $("qcount").textContent = (idx+1) + " / " + quiz.length;
+  $("bar").style.width = ((idx)/quiz.length*100) + "%";
+  $("qtext").textContent = item.q;
+
+  const box = $("opts");
+  box.innerHTML = "";
+  item.options.forEach((opt,i)=>{
+    const div = document.createElement("div");
+    div.className = "opt" + (answers[idx]===i ? " sel":"");
+    div.innerHTML = '<span class="key">'+LETTERS[i]+'</span><span>'+opt+'</span>';
+    div.addEventListener("click", ()=>{
+      answers[idx] = i;
+      [...box.children].forEach(c=>c.classList.remove("sel"));
+      div.classList.add("sel");
+    });
+    box.appendChild(div);
+  });
+
+  $("exam").classList.remove("fade"); void $("exam").offsetWidth; $("exam").classList.add("fade");
+  $("nextBtn").textContent = (idx === quiz.length-1) ? "Finalizar ✓" : "Siguiente →";
+
+  startTimer();
+}
+
+// ---- temporizador por pregunta ----
+function startTimer(){
+  clearInterval(timer);
+  remaining = PER_Q_SECONDS;
+  updateClock();
+  timer = setInterval(()=>{
+    remaining--; totalElapsed++;
+    updateClock();
+    if(remaining <= 0){
+      clearInterval(timer);
+      goNext(true); // avance automático
+    }
+  },1000);
+}
+function updateClock(){
+  $("clockNum").textContent = fmt(remaining);
+  const off = RING_LEN * (1 - remaining/PER_Q_SECONDS);
+  const ring = $("ring");
+  ring.style.strokeDashoffset = off;
+  if(remaining <= 20){
+    $("timerbar").classList.add("warn");
+    ring.setAttribute("stroke","#9b2c2c");
+  }else{
+    $("timerbar").classList.remove("warn");
+    ring.setAttribute("stroke","#1f5e63");
+  }
+}
+
+// ---- avanzar ----
+$("nextBtn").addEventListener("click", ()=>goNext(false));
+function goNext(auto){
+  clearInterval(timer);
+  if(idx < quiz.length-1){
+    idx++;
+    renderQuestion();
+  }else{
+    finish();
+  }
+}
+
+// ---- resultados ----
+function finish(){
+  clearInterval(timer);
+  $("exam").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  let correct = 0, wrong = 0, skipped = 0;
+  quiz.forEach((item,i)=>{
+    if(answers[i]===null) skipped++;
+    else if(answers[i]===item.answer) correct++;
+    else wrong++;
+  });
+  const score = Math.round(correct/quiz.length*100);
+
+  const sn = $("scoreNum");
+  sn.innerHTML = score + '<small>/100</small>';
+  sn.style.color = score>=80 ? "var(--green)" : (score>=60 ? "var(--gold-deep)" : "var(--red)");
+
+  let v;
+  if(score>=90) v="¡Excelente! Dominio sobresaliente.";
+  else if(score>=80) v="Muy bien. Aprobado con solidez.";
+  else if(score>=60) v="Aprobado. Hay temas por reforzar.";
+  else v="No aprobado. Conviene repasar el material.";
+  $("verdict").textContent = v;
+  $("verdict").style.color = sn.style.color;
+
+  $("stCorrect").textContent = correct;
+  $("stWrong").textContent = wrong + skipped;
+  $("stTime").textContent = fmt(totalElapsed);
+
+  // revisión detallada
+  const rev = $("review");
+  rev.innerHTML = "";
+  quiz.forEach((item,i)=>{
+    const ua = answers[i];
+    const isOk = ua===item.answer;
+    const div = document.createElement("div");
+    div.className = "rev";
+
+    let tag, tagcls;
+    if(ua===null){ tag="Sin responder"; tagcls="skip"; }
+    else if(isOk){ tag="Correcta"; tagcls="ok"; }
+    else { tag="Incorrecta"; tagcls="no"; }
+
+    let html = '<p class="qq">'+(i+1)+'. '+item.q+' <span class="tag '+tagcls+'">'+tag+'</span></p>';
+    if(ua!==null && !isOk){
+      html += '<p class="ans wrong"><span class="tag no">Tu resp.</span> <b>'+LETTERS[ua]+') '+item.options[ua]+'</b></p>';
+    }
+    html += '<p class="ans correct"><span class="tag ok">Correcta</span> <b>'+LETTERS[item.answer]+') '+item.options[item.answer]+'</b></p>';
+    div.innerHTML = html;
+    rev.appendChild(div);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ---- botones finales ----
+$("printBtn").addEventListener("click", ()=>window.print());
+$("againBtn").addEventListener("click", ()=>{
+  $("result").classList.add("hidden");
+  $("start").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+// evitar perder examen por recarga accidental
+window.addEventListener("beforeunload", e=>{
+  if(!$("exam").classList.contains("hidden")){ e.preventDefault(); e.returnValue=""; }
+});
+</script>
+</body>
+</html>
