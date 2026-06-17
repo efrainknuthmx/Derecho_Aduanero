@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen de Despacho Aduanero</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a3c5e 0%, #2c5f8a 100%);
+    color: #222; min-height: 100vh; padding: 20px;
+    display: flex; align-items: flex-start; justify-content: center;
+  }
+  .card {
+    background: #fff; width: 100%; max-width: 760px; border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3); padding: 32px; margin-top: 10px;
+  }
+  h1 { color: #1a3c5e; font-size: 1.6rem; margin-bottom: 6px; text-align: center; }
+  .sub { text-align: center; color: #5a6b7b; margin-bottom: 24px; font-size: 0.95rem; }
+  label { display: block; font-weight: 600; margin-bottom: 8px; color: #1a3c5e; }
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 1rem; border: 2px solid #cdd7e0;
+    border-radius: 8px; margin-bottom: 18px;
+  }
+  input[type=text]:focus { outline: none; border-color: #2c5f8a; }
+  button {
+    background: #2c5f8a; color: #fff; border: none; padding: 13px 28px;
+    font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer;
+    transition: background .2s; width: 100%;
+  }
+  button:hover { background: #1a3c5e; }
+  button.secondary { background: #e2e8ee; color: #1a3c5e; }
+  button.secondary:hover { background: #cdd7e0; }
+  .hidden { display: none; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #eef2f5;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .progress { font-weight: 600; color: #1a3c5e; }
+  .timer {
+    font-weight: 700; font-size: 1.3rem; color: #2c5f8a;
+    background: #eef4f9; padding: 6px 16px; border-radius: 30px; min-width: 70px; text-align: center;
+  }
+  .timer.warn { color: #c0392b; background: #fdecea; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+  .qtext { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #222; }
+  .opt {
+    display: block; padding: 14px 16px; margin-bottom: 12px; border: 2px solid #cdd7e0;
+    border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all .15s; line-height: 1.4;
+  }
+  .opt:hover { border-color: #2c5f8a; background: #f5f9fc; }
+  .opt.selected { border-color: #2c5f8a; background: #e8f1f8; font-weight: 600; }
+  .bar { height: 8px; background: #eef2f5; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+  .bar > div { height: 100%; background: #2c5f8a; transition: width .3s; }
+  .result-score { font-size: 3rem; font-weight: 800; text-align: center; margin: 10px 0; }
+  .pass { color: #27ae60; }
+  .fail { color: #c0392b; }
+  .result-name { text-align: center; font-size: 1.25rem; margin-bottom: 6px; color: #1a3c5e; font-weight: 700; }
+  .result-detail { text-align: center; color: #5a6b7b; margin-bottom: 24px; }
+  .review { margin-top: 26px; }
+  .review h3 { color:#1a3c5e; margin-bottom:14px; }
+  .ri { padding: 12px 14px; border-radius: 8px; margin-bottom: 10px; font-size: .92rem; line-height:1.45; }
+  .ri.ok { background: #eafaf1; border-left: 4px solid #27ae60; }
+  .ri.no { background: #fdecea; border-left: 4px solid #c0392b; }
+  .ri .qn { font-weight: 700; }
+  .ri .ua { color:#c0392b; }
+  .ri .ca { color:#27ae60; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- INICIO -->
+  <div id="start">
+    <h1>Examen de Despacho Aduanero</h1>
+    <p class="sub">60 preguntas · 3 opciones cada una · 1 minuto por pregunta</p>
+    <label for="name">Escribe tu nombre completo para comenzar:</label>
+    <input type="text" id="name" placeholder="Nombre y apellidos" autocomplete="off">
+    <button onclick="startExam()">Comenzar examen</button>
+  </div>
+
+  <!-- EXAMEN -->
+  <div id="exam" class="hidden">
+    <div class="topbar">
+      <span class="progress" id="progress"></span>
+      <span class="timer" id="timer">60</span>
+    </div>
+    <div class="bar"><div id="barfill" style="width:0%"></div></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="opts"></div>
+    <div style="margin-top:20px;">
+      <button id="nextBtn" onclick="nextQuestion()">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="result" class="hidden">
+    <h1>Resultados del Examen</h1>
+    <p class="result-name" id="rName"></p>
+    <div class="result-score" id="rScore"></div>
+    <p class="result-detail" id="rDetail"></p>
+    <button class="secondary" onclick="toggleReview()">Ver / ocultar revisión de respuestas</button>
+    <div id="review" class="review hidden"></div>
+    <div style="margin-top:18px;">
+      <button onclick="location.reload()">Reiniciar examen</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {q:"¿Qué es el despacho aduanero?",o:["El conjunto de actos y formalidades relativos a la entrada y salida de mercancías al territorio nacional","Únicamente el pago de impuestos al comercio exterior","El transporte de mercancías entre dos almacenes nacionales"],a:0},
+  {q:"¿Qué documento ampara legalmente la importación o exportación de mercancías?",o:["La factura comercial","El pedimento","La carta porte"],a:1},
+  {q:"¿Quién está facultado para promover el despacho aduanero por cuenta de terceros?",o:["El agente aduanal o la agencia aduanal","El transportista","El almacenista"],a:0},
+  {q:"¿Cómo se le denomina al lugar autorizado para la entrada y salida de mercancías del país?",o:["Recinto fiscal","Bodega particular","Zona franca abierta"],a:0},
+  {q:"El mecanismo de selección automatizado determina si la mercancía será sujeta a:",o:["Reconocimiento aduanero o desaduanamiento libre","Embargo definitivo","Subasta pública"],a:0},
+  {q:"¿Qué impuesto general grava la entrada de mercancías al territorio nacional?",o:["IGI (Impuesto General de Importación)","ISR","Predial"],a:0},
+  {q:"La clasificación arancelaria de las mercancías se realiza conforme a:",o:["La TIGIE (Tarifa de la Ley de los Impuestos Generales de Importación y de Exportación)","El catálogo del proveedor","La lista de precios oficial"],a:0},
+  {q:"¿Cuántos dígitos integran la fracción arancelaria en la TIGIE mexicana (con NICO)?",o:["6 dígitos","8 dígitos más NICO de 2 dígitos","12 dígitos exactos"],a:1},
+  {q:"El reconocimiento aduanero consiste en:",o:["El examen de las mercancías y de su documentación por la autoridad aduanera","El pago anticipado de contribuciones","El registro del importador en el padrón"],a:0},
+  {q:"¿Qué es el valor en aduana de las mercancías de importación?",o:["El valor de transacción, es decir, el precio pagado o por pagar","El valor de reventa en el mercado nacional","El costo de producción declarado"],a:0},
+  {q:"Las cuotas compensatorias se aplican a mercancías en condiciones de:",o:["Prácticas desleales de comercio internacional (dumping o subvenciones)","Sobreoferta nacional","Escasez temporal"],a:0},
+  {q:"¿Qué es el padrón de importadores?",o:["El registro ante el SAT que deben tener quienes importan mercancías","Una lista de proveedores extranjeros","Un catálogo de fracciones arancelarias"],a:0},
+  {q:"Las Regulaciones y Restricciones No Arancelarias (RRNA) incluyen, entre otras:",o:["Permisos previos, NOMs y avisos automáticos","Solo el pago del IVA","Únicamente el flete internacional"],a:0},
+  {q:"El régimen aduanero de importación definitiva implica que las mercancías:",o:["Permanecen por tiempo ilimitado en territorio nacional","Deben retornar al extranjero en seis meses","Quedan en depósito fiscal indefinido"],a:0},
+  {q:"¿Cuál es el régimen aduanero para la elaboración, transformación o reparación en programas de maquila o exportación?",o:["Importación temporal para elaboración (IMMEX)","Tránsito interno","Importación definitiva"],a:0},
+  {q:"El depósito fiscal permite el almacenamiento de mercancías en:",o:["Almacenes generales de depósito autorizados","Cualquier bodega particular","La vía pública"],a:0},
+  {q:"El tránsito de mercancías puede ser:",o:["Interno o internacional","Solo marítimo","Únicamente aéreo"],a:0},
+  {q:"¿Qué es la cuenta aduanera de garantía?",o:["Un mecanismo para garantizar el pago de contribuciones que pudieran causarse","Una cuenta bancaria del agente aduanal","Un depósito para el flete"],a:0},
+  {q:"El IVA en la importación se calcula sobre:",o:["El valor en aduana más el IGI y demás contribuciones y aprovechamientos","Únicamente sobre el flete","El precio de venta nacional final"],a:0},
+  {q:"¿Qué es el DTA?",o:["Derecho de Trámite Aduanero","Documento de Transporte Autorizado","Declaración de Tránsito Aéreo"],a:0},
+  {q:"La factura comercial debe contener, entre otros datos:",o:["Descripción comercial detallada de las mercancías y valor","Solo el nombre del transportista","Únicamente la fecha de embarque"],a:0},
+  {q:"¿Qué documento acredita el origen de las mercancías para preferencias arancelarias?",o:["El certificado de origen","La guía aérea","El manifiesto de carga"],a:0},
+  {q:"El embargo precautorio de mercancías procede cuando:",o:["Existen irregularidades detectadas durante el reconocimiento aduanero","El importador paga puntualmente","La mercancía está clasificada correctamente"],a:0},
+  {q:"El PAMA es el:",o:["Procedimiento Administrativo en Materia Aduanera","Plan Anual de Mercancías Autorizadas","Permiso Aduanal de Mercancía Agrícola"],a:0},
+  {q:"¿Qué es la rectificación de pedimento?",o:["La corrección de datos asentados en un pedimento ya tramitado","La cancelación total de la importación","El cambio de agente aduanal"],a:0},
+  {q:"El incoterm que indica que el vendedor entrega la mercancía a bordo del buque es:",o:["FOB (Free On Board)","EXW (Ex Works)","DDP (Delivered Duty Paid)"],a:0},
+  {q:"En el incoterm CIF, el vendedor cubre:",o:["Costo, seguro y flete hasta el puerto de destino","Solo el costo de la mercancía","Únicamente el transporte interno del comprador"],a:0},
+  {q:"¿Qué es el manifiesto de carga?",o:["El documento que relaciona las mercancías transportadas en un medio de transporte","La factura del exportador","El certificado fitosanitario"],a:0},
+  {q:"El reconocimiento aduanero, tras el mecanismo de selección automatizado, lo puede practicar:",o:["La autoridad aduanera","El propio importador","El proveedor extranjero"],a:0},
+  {q:"¿Qué significa que el semáforo fiscal marque luz verde?",o:["Desaduanamiento libre, sin reconocimiento","Embargo inmediato","Pago doble de contribuciones"],a:0},
+  {q:"El padrón de sectores específicos se requiere para importar mercancías:",o:["Sensibles o sujetas a control especial (ej. textiles, calzado, alcohol)","De cualquier tipo sin excepción","Solo de exportación"],a:0},
+  {q:"La base gravable del IGI es, por regla general:",o:["El valor en aduana de la mercancía","El peso bruto del embarque","El número de bultos"],a:0},
+  {q:"¿Qué es una NOM en materia de comercio exterior?",o:["Norma Oficial Mexicana que regula características o información de productos","Nota de Operación Mercantil","Número de Orden Marítima"],a:0},
+  {q:"El primer paso del despacho aduanero suele ser:",o:["La presentación de la mercancía y el pedimento ante la aduana","El pago del IVA nacional","La venta al consumidor final"],a:0},
+  {q:"¿Qué es el RFC en el contexto del despacho aduanero?",o:["El Registro Federal de Contribuyentes del importador o exportador","Un régimen aduanero especial","La fracción arancelaria principal"],a:0},
+  {q:"El agente aduanal responde de:",o:["La veracidad y exactitud de los datos del pedimento que tramita","Las ventas del importador","El transporte internacional únicamente"],a:0},
+  {q:"¿Qué es la consulta de clasificación arancelaria?",o:["El procedimiento para que la autoridad determine la fracción aplicable a una mercancía","Una subasta de mercancías","El pago de cuotas compensatorias"],a:0},
+  {q:"La importación temporal de bienes para retornar en el mismo estado se usa, por ejemplo, para:",o:["Mercancías en exposiciones, ferias o eventos","Bienes de consumo definitivo","Productos a destruir"],a:0},
+  {q:"El abandono de mercancías a favor del fisco federal puede ocurrir cuando:",o:["No se retiran del recinto fiscal dentro de los plazos legales","Se pagan todos los impuestos","Se clasifican correctamente"],a:0},
+  {q:"¿Qué es el COVE?",o:["Comprobante de Valor Electrónico","Control de Vehículos Extranjeros","Certificado de Origen Vegetal Estándar"],a:0},
+  {q:"La ventanilla única de comercio exterior (VUCEM) sirve para:",o:["Realizar trámites de comercio exterior de forma digital ante diversas dependencias","Vender mercancías al público","Cobrar el flete internacional"],a:0},
+  {q:"¿Qué autoridad administra las aduanas en México?",o:["La Agencia Nacional de Aduanas de México (ANAM)","La Secretaría de Salud","El Banco de México"],a:0},
+  {q:"La determinación de las contribuciones al comercio exterior se realiza en:",o:["El pedimento","La carta de crédito","La póliza de seguro"],a:0},
+  {q:"¿Qué es el peso neto de la mercancía?",o:["El peso de la mercancía sin incluir empaques ni embalajes","El peso total con contenedor","El peso del medio de transporte"],a:0},
+  {q:"Los aranceles ad valorem se expresan como:",o:["Un porcentaje sobre el valor en aduana","Una cantidad fija por bulto","Un monto en moneda extranjera por kilómetro"],a:0},
+  {q:"Los aranceles específicos se aplican con base en:",o:["Una cantidad monetaria por unidad de medida (peso, volumen, pieza)","El porcentaje sobre el valor","El número de pedimentos"],a:0},
+  {q:"¿Qué es el certificado fitosanitario?",o:["Documento que acredita la condición sanitaria de productos vegetales","La factura del transporte","El permiso de la SHCP"],a:0},
+  {q:"El plazo general de la importación temporal IMMEX para insumos suele ser de:",o:["Hasta 18 meses (según el tipo de mercancía)","24 horas","10 años fijos"],a:0},
+  {q:"¿Qué es la subvaluación en aduana?",o:["Declarar un valor inferior al real de las mercancías","Pagar más impuestos de lo debido","Clasificar correctamente la fracción"],a:0},
+  {q:"El reconocimiento aduanero puede apoyarse con:",o:["Equipos de rayos gamma o rayos X y sistemas tecnológicos","Únicamente inspección visual a simple vista","Solo la palabra del importador"],a:0},
+  {q:"¿Qué es un recinto fiscalizado?",o:["Un inmueble donde particulares prestan servicios de manejo y custodia de mercancías bajo control aduanero","Una bodega sin vínculo con la aduana","Una zona de venta al público"],a:0},
+  {q:"El pedimento consolidado permite:",o:["Amparar varias operaciones de un mismo importador en un periodo","Una sola pieza por operación","Importar sin RFC"],a:0},
+  {q:"¿Qué es la cuota compensatoria provisional?",o:["La impuesta durante la investigación antes de la resolución definitiva","La aplicada de forma permanente","La devolución de impuestos"],a:0},
+  {q:"El origen no preferencial de una mercancía sirve principalmente para:",o:["Aplicar cuotas compensatorias, marcado de país de origen y estadística","Otorgar arancel cero automático","Eliminar las NOMs"],a:0},
+  {q:"¿Qué es la franquicia o exención en el equipaje de pasajeros?",o:["El monto o cantidad de mercancías que el pasajero puede ingresar sin pago de impuestos","El permiso para no declarar nada","Un descuento en el flete"],a:0},
+  {q:"El pedimento de exportación corresponde a la clave de régimen:",o:["Definitiva de exportación (clave A1 de exportación según el caso)","Importación definitiva exclusivamente","Tránsito interno únicamente"],a:0},
+  {q:"¿Qué es el glosa de pedimentos?",o:["La revisión documental posterior al despacho por la autoridad","La venta de la mercancía","El embarque internacional"],a:0},
+  {q:"La toma de muestras durante el reconocimiento se aplica a:",o:["Mercancías estériles, peligrosas o difíciles de identificar","Únicamente mercancías de exportación","Solo equipaje de pasajeros"],a:0},
+  {q:"¿Qué es el T-MEC en el comercio exterior de México?",o:["El Tratado entre México, Estados Unidos y Canadá","Un régimen aduanero temporal","Una norma oficial de etiquetado"],a:0},
+  {q:"La regla de origen en un tratado comercial determina:",o:["Si una mercancía califica para trato arancelario preferencial","El precio de venta al público","El peso bruto del embarque"],a:0}
+];
+
+let userName = "";
+let current = 0;
+let answers = [];
+let timer = null;
+let timeLeft = 60;
+
+function startExam(){
+  const n = document.getElementById('name').value.trim();
+  if(!n){ alert("Por favor escribe tu nombre para comenzar."); return; }
+  userName = n;
+  answers = new Array(QUESTIONS.length).fill(null);
+  current = 0;
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('exam').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const Q = QUESTIONS[current];
+  document.getElementById('progress').textContent = `Pregunta ${current+1} de ${QUESTIONS.length}`;
+  document.getElementById('barfill').style.width = ((current)/QUESTIONS.length*100)+'%';
+  document.getElementById('qtext').textContent = Q.q;
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  Q.o.forEach((text,i)=>{
+    const div = document.createElement('div');
+    div.className = 'opt' + (answers[current]===i ? ' selected':'');
+    div.textContent = text;
+    div.onclick = ()=>{ answers[current]=i; renderQuestion(); };
+    opts.appendChild(div);
+  });
+  document.getElementById('nextBtn').textContent = (current===QUESTIONS.length-1) ? 'Finalizar examen' : 'Siguiente';
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timer);
+  timeLeft = 60;
+  const t = document.getElementById('timer');
+  t.textContent = timeLeft;
+  t.classList.remove('warn');
+  timer = setInterval(()=>{
+    timeLeft--;
+    t.textContent = timeLeft;
+    if(timeLeft<=10) t.classList.add('warn');
+    if(timeLeft<=0){ clearInterval(timer); nextQuestion(); }
+  },1000);
+}
+
+function nextQuestion(){
+  clearInterval(timer);
+  if(current < QUESTIONS.length-1){
+    current++;
+    renderQuestion();
+  } else {
+    finishExam();
+  }
+}
+
+function finishExam(){
+  clearInterval(timer);
+  let correct = 0;
+  answers.forEach((a,i)=>{ if(a===QUESTIONS[i].a) correct++; });
+  const total = QUESTIONS.length;
+  const grade = (correct/total*10).toFixed(1);
+  const pct = Math.round(correct/total*100);
+  const passed = grade>=6;
+
+  document.getElementById('exam').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('rName').textContent = userName;
+  const scoreEl = document.getElementById('rScore');
+  scoreEl.textContent = grade + ' / 10';
+  scoreEl.className = 'result-score ' + (passed?'pass':'fail');
+  document.getElementById('rDetail').textContent =
+    `${correct} de ${total} respuestas correctas (${pct}%). ${passed?'¡Aprobado!':'No aprobado.'}`;
+
+  const rev = document.getElementById('review');
+  rev.innerHTML = '<h3>Revisión de respuestas</h3>';
+  QUESTIONS.forEach((Q,i)=>{
+    const ok = answers[i]===Q.a;
+    const ua = answers[i]===null ? 'Sin responder' : Q.o[answers[i]];
+    const div = document.createElement('div');
+    div.className = 'ri ' + (ok?'ok':'no');
+    div.innerHTML = `<span class="qn">${i+1}. ${Q.q}</span><br>`+
+      (ok ? `<span class="ca">✓ Correcta: ${Q.o[Q.a]}</span>`
+          : `<span class="ua">✗ Tu respuesta: ${ua}</span><br><span class="ca">✓ Correcta: ${Q.o[Q.a]}</span>`);
+    rev.appendChild(div);
+  });
+}
+
+function toggleReview(){
+  document.getElementById('review').classList.toggle('hidden');
+}
+</script>
+</body>
+</html>
